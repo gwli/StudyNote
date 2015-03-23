@@ -6,6 +6,10 @@
 import cv2
 import numpy as np
 from glob import glob
+from IPython.display import Image
+
+# <markdowncell>
+
 
 # <codecell>
 
@@ -38,15 +42,31 @@ def porcess(img,filters):
 # <codecell>
 
 if __name__ == '__main__':
-    images = glob("image_data/*.jpg")
+    images = glob("image_data/image_0001.jpg")
     img = cv2.imread(images[0])
     filters = build_filters()
-    res1 = porcess(img, filters)
-    cv2.imshow('result',img)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    filters.shape
+    res = porcess(img, filters[0])
+    cv2.imwrite('result.jpg',res)
+    
 
 # <markdowncell>
 
 # 现在这个gabor filter是什么？还需要再写写
+
+# <codecell>
+
+Image('image_data/image_0001.jpg',height=200,width=200)
+
+# <codecell>
+
+Image(filename='result.jpg') 
+
+# <markdowncell>
+
+# 这里得到的是什么信息？这么奇怪
+
+# <markdowncell>
+
+# 详细参考：http://visioncompute.readthedocs.org/en/latest/ComputerVision/GaborFilter.html?highlight=gabor
 
