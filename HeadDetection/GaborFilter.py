@@ -8,15 +8,12 @@ import numpy as np
 from glob import glob
 from IPython.display import Image
 
-# <markdowncell>
-
-
 # <codecell>
 
 def build_filters():
     filters = []
-    ksize = 31
-    for theta in np.arange(0,np.pi, np.pi/16):
+    ksize = 7
+    for theta in np.arange(0,np.pi, np.pi/8):
         kern  = cv2.getGaborKernel((ksize,ksize), 4.0, theta, 10.00, 0.5, 0, ktype = cv2.CV_32F)
         kern /= 1.5* kern.sum()
         filters.append(kern)
@@ -45,8 +42,7 @@ if __name__ == '__main__':
     images = glob("image_data/image_0001.jpg")
     img = cv2.imread(images[0])
     filters = build_filters()
-    filters.shape
-    res = porcess(img, filters[0])
+    res = porcess(img, filters)
     cv2.imwrite('result.jpg',res)
     
 
@@ -65,8 +61,9 @@ Image(filename='result.jpg')
 # <markdowncell>
 
 # 这里得到的是什么信息？这么奇怪
-
-# <markdowncell>
-
+# gabor filter 获得的是方向信息。这里是所有的方向信息混合。
 # 详细参考：http://visioncompute.readthedocs.org/en/latest/ComputerVision/GaborFilter.html?highlight=gabor
+
+# <codecell>
+
 
