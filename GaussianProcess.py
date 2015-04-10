@@ -284,7 +284,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
                 raise Exception("Bad parameter region. "
                                 "Try increasing upper bound")
 
-        else:
+	else
             # Given parameters
             if self.verbose:
                 print("Given autocorrelation parameters. "
