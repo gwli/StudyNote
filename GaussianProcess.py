@@ -215,7 +215,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
 
         # Check shapes of DOE & observations
         n_samples, n_features = X.shape
-        _, n_targets = y.shape
+        n_targets = y.shape
 
         # Run input checks
         self._check_params(n_samples)
@@ -284,7 +284,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
                 raise Exception("Bad parameter region. "
                                 "Try increasing upper bound")
 
-	else
+	else:
             # Given parameters
             if self.verbose:
                 print("Given autocorrelation parameters. "
@@ -465,7 +465,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
                     y[batch_from:batch_to] = \\
                         self.predict(X[batch_from:batch_to],
                                      eval_MSE=eval_MSE, batch_size=None)
-
+atch_from:batch_to], 
                 return y
 
     def reduced_likelihood_function(self, theta=None):
