@@ -15,10 +15,6 @@
 
 # <markdowncell>
 
-# ## 符号推倒
-
-# <markdowncell>
-
 # ### 向量计算
 
 # <markdowncell>
@@ -27,12 +23,29 @@
 
 # <markdowncell>
 
+# ## 矩阵运算
+
+# <headingcell level=1>
+
+# 使用sympy 可视化
+
+# <markdowncell>
+
 # #### 使用LaTeX命令  latex格式的
+
+# <markdowncell>
+
+# ##概率统计知识
+
+# <headingcell level=3>
+
+# 符号推倒
 
 # <codecell>
 
 from sympy  import  *
 from sympy.abc import *
+init_printing(use_unicode='True')
 
 # <codecell>
 
@@ -41,11 +54,11 @@ def g(x):
 
 # <codecell>
 
-latex(g(x))
+g(x).diff(x)
 
 # <markdowncell>
 
-# ##### 使用sympy 可视化
+# 这里可以代入数据,输出数值结果
 
 # <codecell>
 
@@ -54,6 +67,35 @@ from sympy.plotting import  plot
 # <codecell>
 
 plot(g(x),(x,-3,3))
+
+# <codecell>
+
+x =33
+
+# <codecell>
+
+g(x)
+
+# <markdowncell>
+
+# 但是如果使用定义成字符串，也可以代入。
+
+# <codecell>
+
+x = symbols('x')
+
+# <codecell>
+
+def F(x):
+    return x**2+x*2
+
+# <codecell>
+
+x =33
+
+# <codecell>
+
+F(x)
 
 # <markdowncell>
 
@@ -100,7 +142,8 @@ Eq_5_5_17=Eq(G(u,v),H(u,v)*F(u,v)+N(u,v))
 
 ft=integrate(G(x)*E**(-I*w*x),x)
 ft
-s,n,f =symbols('s n f')ft.expand().combsimp()
+s,n,f =symbols('s n f')
+ft.expand().combsimp()
 ban=ft.expand()
 ban.collect(s)
 ban.coeff(s,2)
@@ -117,7 +160,7 @@ A=MatrixSymbol('A',I,F)
 B=MatrixSymbol('B',J,F)
 C=MatrixSymbol('C',K,F)
 X_i=B*diag(A[0,0],A[0,1],A[0,2])*transpose(C)
-X_i.
+X_i
 
 # <markdowncell>
 
@@ -143,18 +186,21 @@ p
 
 from sympy import Inverse, MatrixSymbol
 x = MatrixSymbol('x',3,3)
-M = Matrix([[3, -2, 4, -2], [5, 3, -3, -2], [5, -2, 2, -2], [5, -2, -3, 3]])
-E,D=M.diagonalize()
-E*D**-1/2*Transpose(E)*M*adjoint(E*D**-1/2*Transpose(E)*M)
-D**-1/2*conjugate(E)*M*adjoint()
 A = Symbol('A', hermitian=True)
 B = Symbol('B', antihermitian=True)
 adjoint(A)
-x=E*D**-1/2*transpose(E)*E*D*
+#x=E*D**-1/2*transpose(E)*E*D*
 
-# <markdowncell>
+# <codecell>
 
-# ## sympy 用于展示矩阵
+M = Matrix([[3, -2, 4, -2], [5, 3, -3, -2], [5, -2, 2, -2], [5, -2, -3, 3]])
+E,D=M.diagonalize()
+E*D**-1/2*Transpose(E)*M*adjoint(E*D**-1/2*Transpose(E)*M)
+D**-1/2*conjugate(E)*M*adjoint(A)
+
+# <headingcell level=2>
+
+# 矩阵操作
 
 # <codecell>
 
@@ -162,14 +208,15 @@ from sympy import Matrix
 from sympy import *
 from sympy import MatrixSymbol
 
+# <markdowncell>
+
+# 定义矩阵大小
+
 # <codecell>
 
 x = MatrixSymbol('x',3,3)
-y= x.adjoint
-
-# <markdowncell>
-
-# 这里必须定义矩阵大小
+y= x.adjoint()
+y
 
 # <codecell>
 
@@ -256,6 +303,29 @@ print summation(h(n),(n,1,N))
 y1 = limit(sin(x)/x,x,0) 
 y2= summation(x**n/factorial(n),(n,0,oo))
 y2
+
+# <codecell>
+
+from sympy import *
+m=Matrix([[2,6,4],[3,8,4],[1,6,4]])
+m
+
+# <codecell>
+
+m.rref()
+
+# <markdowncell>
+
+# 新产生的向量是什么？
+
+# <codecell>
+
+M = Matrix([[1, 2, 3, 0, 0], [4, 10, 0, 0, 1]])
+z=M.nullspace()
+
+# <codecell>
+
+z
 
 # <codecell>
 

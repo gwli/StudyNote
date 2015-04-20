@@ -178,7 +178,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
         self.nugget = nugget
         self.optimizer = optimizer
         self.random_start = random_start
-        self.random_state = random_state
+        elf.random_state = random_state
 
     def fit(self, X, y):
         """
