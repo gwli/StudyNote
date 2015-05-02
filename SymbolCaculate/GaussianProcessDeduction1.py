@@ -11,6 +11,13 @@ from sympy import *
 from sympy.stats import  *
 init_printing()
 
+# <codecell>
+
+n=4
+X= MatrixSymbol('X',n,1)
+Y= MatrixSymbol('Y',n,1)
+np.dot(X,Y)
+
 # <headingcell level=2>
 
 # squared exponent （SE）kernel
@@ -30,9 +37,11 @@ n=4
 K= symbols('K',cls =Function)
 X= MatrixSymbol('X',n,1)
 Y= MatrixSymbol('Y',n,1)
-def K(x,y):
-    tmp=-1/2*(x-y).T/M*(x-y)
+dot(X.T,Y.T)
+def K(X,Y):
+    tmp=-1/2*(X-Y).T/M*(X-Y)
     return  sigma1**2*exp(tmp[0,0])
+K(X,Y)
 
 # <markdowncell>
 
@@ -63,21 +72,36 @@ PA=norm(ZeroMatrix(1,n), sigman**2*Identity(n))
 
 # <codecell>
 
-PAB=norm(ZeroMatrix(n+1,n+1), BlockMatrix([K(X,X)+d**2*dentity(n), K(X,x)],
-         [ K(X,x) K(x,x)]))
+PAB=norm(0, )
 
 # <codecell>
 
-X= MatrixSymbol('X',n,1)
-x= MatrixSymbol('x',1,1)
+sigmaj= BlockMatrix([[K(X,X)+d**2, K(X,x)],
+         [ K(X,x), K(x,x)]])
+sigmaj
 
 # <codecell>
 
-Kernel(X,X)
+x= MatrixSymbol('x',1,2)
+
+# <codecell>
+
+normal =-x.doit()
+#/sqrt(2*pi)
+
+# <codecell>
+
+#X= MatrixSymbol('X',n,1)
+#x= MatrixSymbol('x',1,1)
 
 # <codecell>
 
 K(X,X)
+
+# <codecell>
+
+import scipy
+scipy.__version__
 
 # <codecell>
 
@@ -90,4 +114,11 @@ BlockMatrix([[K(X,X)+sigman**2, K(X,x)], [K(x,X), K(x,x)]])
 # <markdowncell>
 
 # 这和普通的符号计算Matrixsymbol有什么区别？
+
+# <headingcell level=2>
+
+# [多变量正态分布](https://sympystats.wordpress.com/2011/07/19/multivariate-normal-random-variables/)
+
+# <codecell>
+
 
