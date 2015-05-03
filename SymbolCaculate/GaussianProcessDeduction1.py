@@ -3,9 +3,6 @@
 
 # <codecell>
 
-
-# <codecell>
-
 from sympy.abc import  *
 from sympy import *
 from sympy.stats import  *
@@ -13,10 +10,10 @@ init_printing()
 
 # <codecell>
 
-n=4
-X= MatrixSymbol('X',n,1)
-Y= MatrixSymbol('Y',n,1)
-np.dot(X,Y)
+#n=4
+#X= MatrixSymbol('X',n,1)
+#Y= MatrixSymbol('Y',n,1)
+#np.dot(X,Y)
 
 # <headingcell level=2>
 
@@ -33,19 +30,21 @@ PAB = symbols('P_{AB}',cls =Function)
 
 # <codecell>
 
-n=4
 K= symbols('K',cls =Function)
-X= MatrixSymbol('X',n,1)
-Y= MatrixSymbol('Y',n,1)
-dot(X.T,Y.T)
-def K(X,Y):
+def K(x,y,n):
+    X = MatrixSymbol(x,n,1)
+    Y = MatrixSymbol(y,n,1)
     tmp=-1/2*(X-Y).T/M*(X-Y)
     return  sigma1**2*exp(tmp[0,0])
-K(X,Y)
+K("a","b",4)
+
+# <codecell>
+
+SigmaN=BlockMatrix([[K("X","X",1)+sigman**2, K("X","x",1)], [K("x","X",1), K("x","x",1)]])
 
 # <markdowncell>
 
-# 这里下面无法表达任意的，主要还要修改 搜索  def matrix operation
+# 这里好像还是不太对，继续修改
 
 # <headingcell level=2>
 
@@ -53,18 +52,14 @@ K(X,Y)
 
 # <codecell>
 
-mu = Symbol('mu', real=True)
-sigma = Symbol("sigma",positive=True)
-
-# <codecell>
-
-def norm(mu,sigma):
-    normal =exp(-(x-mu)**2/(2*sigma**2))/sqrt(2*pi)
-    return normal
-
-# <codecell>
-
-norm(mu,sigma)
+n=2
+Mu = MatrixSymbol('Mu', n,1)
+Sigma = MatrixSymbol("Sigma",n,n)
+def normal(x,Mu,Sigma,n):
+    X = MatrixSymbol(x,n,1)
+    #normal =exp(-(X-Mu)*(X-Mu).T/(2*Sigma**2))/sqrt(2*pi)
+    return -(X-Mu)*(X-Mu).T/(2*Sigma**2)
+normal("X",Mu,Sigma,n)
 
 # <codecell>
 
@@ -102,10 +97,6 @@ K(X,X)
 
 import scipy
 scipy.__version__
-
-# <codecell>
-
-BlockMatrix([[K(X,X)+sigman**2, K(X,x)], [K(x,X), K(x,x)]])
 
 # <markdowncell>
 
