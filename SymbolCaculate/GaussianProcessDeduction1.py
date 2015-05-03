@@ -41,14 +41,22 @@ K("a","b",4)
 # <codecell>
 
 SigmaN=BlockMatrix([[K("X","X",1)+sigman**2, K("X","x",1)], [K("x","X",1), K("x","x",1)]])
+SigmaN
+
+# <codecell>
+
+
+# <headingcell level=2>
+
+# 定义多元正态分布
 
 # <markdowncell>
 
 # 这里好像还是不太对，继续修改
 
-# <headingcell level=2>
+# <markdowncell>
 
-# 产生正态分布
+# 这里的shape 为什么无法使用？
 
 # <codecell>
 
@@ -57,17 +65,16 @@ Mu = MatrixSymbol('Mu', n,1)
 Sigma = MatrixSymbol("Sigma",n,n)
 def normal(x,Mu,Sigma,n):
     X = MatrixSymbol(x,n,1)
-    #normal =exp(-(X-Mu)*(X-Mu).T/(2*Sigma**2))/sqrt(2*pi)
     return -(X-Mu)*(X-Mu).T/(2*Sigma**2)
 normal("X",Mu,Sigma,n)
 
+# <markdowncell>
+
+# Sigma.shape 是可以的，但是SigmaN.shape是不行的，说民两个不是同一种类型的？
+
 # <codecell>
 
-PA=norm(ZeroMatrix(1,n), sigman**2*Identity(n))
-
-# <codecell>
-
-PAB=norm(0, )
+PA=normal('X',ZeroMatrix(n,1), sigman**2*Identity(n),1)
 
 # <codecell>
 
@@ -81,22 +88,12 @@ x= MatrixSymbol('x',1,2)
 
 # <codecell>
 
-normal =-x.doit()
-#/sqrt(2*pi)
-
-# <codecell>
-
 #X= MatrixSymbol('X',n,1)
 #x= MatrixSymbol('x',1,1)
 
 # <codecell>
 
 K(X,X)
-
-# <codecell>
-
-import scipy
-scipy.__version__
 
 # <markdowncell>
 
