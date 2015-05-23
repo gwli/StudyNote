@@ -64,13 +64,13 @@ for i in xrange(SheetNum):
 
 # 一本院校分析
 
-# <codecell>
-
-ChooseSchool(0,SheetNum/4,20,20,0.1)
-
 # <headingcell level=3>
 
 # 二本院校分析
+
+# <codecell>
+
+ChooseSchool(0,SheetNum/4,20,20,0.1)
 
 # <codecell>
 
