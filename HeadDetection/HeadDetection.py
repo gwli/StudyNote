@@ -3,15 +3,6 @@
 
 # <codecell>
 
-#!ls image_data
-images = glob.glob("image_data/*.jpg")
-
-# <codecell>
-
-images[0]
-
-# <codecell>
-
 from __future__ import division
 import cv2
 import numpy as np
@@ -22,7 +13,6 @@ import argparse
 
 # <codecell>
 
-class ImageAirport:
     def __init__(self, imgpath):
         if os.path.exists(imgpath) == "False":
             return "can't open img :" + imgpath
@@ -178,29 +168,20 @@ class ImageAirport:
         f.close()
     
     def execute(self):
-#         self.calculateTheta()
-#         self.drawline()
-#         self.affineTransform()
-#         self.upDownY()
-#         self.leftRightX()
-#         self.cropImage()
-#         self.denoising()
          self.blockDetection()
 
-        
+# <codecell>
+
 if __name__ == '__main__':
    parser = argparse.ArgumentParser(description="ImageAirport Author:zhang gege ")
-   parser.add_argument('--img',help='image path', type=str,default=images[0])
+   parser.add_argument('--img',help='image path', type=str,default='image_data/image_0001.jpg')
    args = parser.parse_args()
    one = ImageAirport(args.img)
    one.execute()
-   
 
 # <codecell>
 
-
-# <codecell>
-
+ls 
 
 # <codecell>
 
