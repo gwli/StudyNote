@@ -14,7 +14,11 @@ from IPython.display import  Image
 
 # <codecell>
 
-img = cv2.imread('InClass.png')
+imagePath ='HeadImages/01300000178518124143778568716.jpg'
+
+# <codecell>
+
+img = cv2.imread(imagePath)
 img = cv2.cvtColor(img, cv2.cv.CV_BGR2GRAY)
 img = cv2.GaussianBlur(img,(3,3),0) 
 edges = cv2.Canny(img, 50, 150)  
@@ -23,7 +27,7 @@ lines = cv2.HoughLinesP(edges,1,np.pi/180, 100, minLineLength= 20, maxLineGap = 
 
 # <codecell>
 
-Image('InClass.png')
+Image(imagePath)
 
 # <codecell>
 
