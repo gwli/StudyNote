@@ -14,16 +14,13 @@ from IPython.display import  Image
 
 # <codecell>
 
-imagePath ='HeadImages/th (3).jpg'
+imagePath ='HeadImages/2841_287304_484811.jpg'
 
 # <codecell>
 
 img = cv2.imread(imagePath)
 img = cv2.cvtColor(img, cv2.cv.CV_BGR2GRAY)
 img = cv2.GaussianBlur(img,(3,3),0) 
-edges = cv2.Canny(img, 50, 150)  
-cv2.imwrite('edges.jpg',edges)
-lines = cv2.HoughLinesP(edges,1,np.pi/180, 100, minLineLength= 20, maxLineGap = 10)
 
 # <codecell>
 
