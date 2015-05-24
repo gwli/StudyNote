@@ -14,7 +14,7 @@ from IPython.display import  Image
 
 # <codecell>
 
-imagePath ='HeadImages/01300000178518124143778568716.jpg'
+imagePath ='HeadImages/th (3).jpg'
 
 # <codecell>
 
