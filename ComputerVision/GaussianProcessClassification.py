@@ -16,6 +16,10 @@ from sklearn.utils.validation import check_is_fitted
 from sklearn.gaussian_process import regression_models as regression
 from sklearn.gaussian_process import correlation_models as correlation
 
+# <codecell>
+
+inspect.getsourcelines(check_is_fitted)
+
 # <markdowncell>
 
 # 标准分布函数
@@ -32,48 +36,15 @@ from sympy.abc import *
 import inspect
 import matplotlib.pyplot as plt
 
-# <codecell>
+# <markdowncell>
 
-def l1_cross_distances(X):
-    """
-    Computes the nonzero componentwise L1 cross-distances between the vectors
-    in X.
-    Parameters
-    ----------
-    X: array_like
-        An array with shape (n_samples, n_features)
-    Returns
-    -------
-    D: array with shape (n_samples * (n_samples - 1) / 2, n_features)
-        The array of componentwise L1 cross-distances.
-    ij: arrays with shape (n_samples * (n_samples - 1) / 2, 2)
-        The indices i and j of the vectors in X associated to the cross-
-        distances in D: D[k] = np.abs(X[ij[k, 0]] - Y[ij[k, 1]]).
-    """
-    X = check_array(X)
-    n_samples, n_features = X.shape
-    n_nonzero_cross_dist = n_samples * (n_samples - 1) / 2
-    ij = np.zeros((n_nonzero_cross_dist, 2), dtype=np.int)
-    D = np.zeros((n_nonzero_cross_dist, n_features))
-    ll_1 = 0
-    for k in range(n_samples - 1):
-        ll_0 = ll_1
-        ll_1 = ll_0 + n_samples - k - 1
-        ij[ll_0:ll_1, 0] = k
-        ij[ll_0:ll_1, 1] = np.arange(k + 1, n_samples)
-        D[ll_0:ll_1] = np.abs(X[k] - X[(k + 1):n_samples])
-
-    return D, ij
+# 这里指的是什么？pdf, cdf ,ppf?
 
 # <codecell>
 
 phi = stats.distributions.norm().pdf
 PHI = stats.distributions.norm().cdf
 PHIinv = stats.distributions.norm().ppf
-
-# <markdowncell>
-
-# 这里指的是什么？pdf, cdf ,ppf?
 
 # <codecell>
 
@@ -134,8 +105,165 @@ _optimizer_types = [
 
 # <codecell>
 
-regr='constant'
-corr='squared_exponential'
+def reduced_likelihood_function(theta=None):
+       """
+       This function determines the BLUP parameters and evaluates the reduced
+       likelihood function for the given autocorrelation parameters theta.
+       Maximizing this function wrt the autocorrelation parameters theta is
+       equivalent to maximizing the likelihood of the assumed joint Gaussian
+       distribution of the observations y evaluated onto the design of
+       experiments X.
+       Parameters
+       ----------
+       theta : array_like, optional
+           An array containing the autocorrelation parameters at which the
+           Gaussian Process model parameters should be determined.
+           Default uses the built-in autocorrelation parameters
+           (ie ``theta = theta_``).
+       Returns
+       -------
+       reduced_likelihood_function_value : double
+           The value of the reduced likelihood function associated to the
+           given autocorrelation parameters theta.
+       par : dict
+           A dictionary containing the requested Gaussian Process model
+           parameters:
+               sigma2
+                       Gaussian Process variance.
+               beta
+                       Generalized least-squares regression weights for
+                       Universal Kriging or given beta0 for Ordinary
+                       Kriging.
+               gamma
+                       Gaussian Process weights.
+               C
+                       Cholesky decomposition of the correlation matrix [R].
+               Ft
+                       Solution of the linear equation system : [R] x Ft = F
+               G
+                       QR decomposition of the matrix Ft.
+       """
+       check_is_fitted(GaussianProcess,'X')
+
+       if theta is None:
+           # Use built-in autocorrelation parameters
+           theta = theta_
+
+       # Initialize output
+       reduced_likelihood_function_value = - np.inf
+       par = {}
+
+       # Retrieve data
+       n_samples = X.shape[0]
+       D = D
+       ij = ij
+       F = F
+
+       if D is None:
+           # Light storage mode (need to recompute D, ij and F)
+           D, ij = l1_cross_distances(X)
+           if (np.min(np.sum(D, axis=1)) == 0.
+                   and corr != correlation.pure_nugget):
+               raise Exception("Multiple X are not allowed")
+           F = regr(X)
+
+       # Set up R
+       r = corr(theta, D)
+       R = np.eye(n_samples) * (1. + nugget)
+       R[ij[:, 0], ij[:, 1]] = r
+       R[ij[:, 1], ij[:, 0]] = r
+
+       # Cholesky decomposition of R
+       try:
+           C = linalg.cholesky(R, lower=True)
+       except linalg.LinAlgError:
+           return reduced_likelihood_function_value, par
+
+       # Get generalized least squares solution
+       Ft = linalg.solve_triangular(C, F, lower=True)
+       try:
+           Q, G = linalg.qr(Ft, econ=True)
+       except:
+           #/usr/lib/python2.6/dist-packages/scipy/linalg/decomp.py:1177:
+           # DeprecationWarning: qr econ argument will be removed after scipy
+           # 0.7. The economy transform will then be available through the
+           # mode='economic' argument.
+           Q, G = linalg.qr(Ft, mode='economic')
+           pass
+
+       sv = linalg.svd(G, compute_uv=False)
+       rcondG = sv[-1] / sv[0]
+       if rcondG < 1e-10:
+           # Check F
+           sv = linalg.svd(F, compute_uv=False)
+           condF = sv[0] / sv[-1]
+           if condF > 1e15:
+               raise Exception("F is too ill conditioned. Poor combination "
+                               "of regression model and observations.")
+           else:
+               # Ft is too ill conditioned, get out (try different theta)
+               return reduced_likelihood_function_value, par
+
+       Yt = linalg.solve_triangular(C, y, lower=True)
+       if beta0 is None:
+           # Universal Kriging
+           beta = linalg.solve_triangular(G, np.dot(Q.T, Yt))
+       else:
+           # Ordinary Kriging
+           beta = np.array(beta0)
+
+       rho = Yt - np.dot(Ft, beta)
+       sigma2 = (rho ** 2.).sum(axis=0) / n_samples
+       # The determinant of R is equal to the squared product of the diagonal
+       # elements of its Cholesky decomposition C
+       detR = (np.diag(C) ** (2. / n_samples)).prod()
+
+       # Compute/Organize output
+       reduced_likelihood_function_value = - sigma2.sum() * detR
+       par['sigma2'] = sigma2 * y_std ** 2.
+       par['beta'] = beta
+       par['gamma'] = linalg.solve_triangular(C.T, rho)
+       par['C'] = C
+       par['Ft'] = Ft
+       par['G'] = G
+
+       return reduced_likelihood_function_value, par
+
+# <codecell>
+
+def l1_cross_distances(X):
+    """
+    Computes the nonzero componentwise L1 cross-distances between the vectors
+    in X.
+    Parameters
+    ----------
+    X: array_like
+        An array with shape (n_samples, n_features)
+    Returns
+    -------
+    D: array with shape (n_samples * (n_samples - 1) / 2, n_features)
+        The array of componentwise L1 cross-distances.
+    ij: arrays with shape (n_samples * (n_samples - 1) / 2, 2)
+        The indices i and j of the vectors in X associated to the cross-
+        distances in D: D[k] = np.abs(X[ij[k, 0]] - Y[ij[k, 1]]).
+    """
+    X = check_array(X)
+    n_samples, n_features = X.shape
+    n_nonzero_cross_dist = n_samples * (n_samples - 1) / 2
+    ij = np.zeros((n_nonzero_cross_dist, 2), dtype=np.int)
+    D = np.zeros((n_nonzero_cross_dist, n_features))
+    ll_1 = 0
+    for k in range(n_samples - 1):
+        ll_0 = ll_1
+        ll_1 = ll_0 + n_samples - k - 1
+        ij[ll_0:ll_1, 0] = k
+        ij[ll_0:ll_1, 1] = np.arange(k + 1, n_samples)
+        D[ll_0:ll_1] = np.abs(X[k] - X[(k + 1):n_samples])
+
+    return D, ij
+
+# <codecell>
+
 beta0=None
 storage_mode='full'
 verbose=False
@@ -147,15 +275,6 @@ random_start=1
 normalize=True
 nugget=10. * MACHINE_EPSILON
 random_state=None
-
-# <codecell>
-
-def fig(X,y):
-    return theta0+1, regr
-
-# <codecell>
-
-fig(X,y)
 
 # <codecell>
 
@@ -215,6 +334,8 @@ def fit(X, y):
                         " target value.")
 
     # Regression matrix and parameters
+    regr=regression.constant
+    corr=correlation.squared_exponential
     F = regr(X)
     n_samples_F = F.shape[0]
     if F.ndim > 1:
@@ -288,6 +409,14 @@ def fit(X, y):
 # <codecell>
 
 fit(X,y)
+
+# <codecell>
+
+hasattr(GaussianProcess,'fit')
+
+# <codecell>
+
+type(GaussianProcess).__name__
 
 # <codecell>
 
