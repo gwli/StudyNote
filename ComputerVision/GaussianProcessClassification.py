@@ -9,9 +9,13 @@
 
 import numpy as np
 from scipy import stats
-from sklearn.gaussian_process import GaussianProcess
-from matplotlib import pyplot as pl
-from matplotlib import cm
+#from sklearn.gaussian_process import GaussianProcess
+from matplotlib import  pyplot as plt
+from matplotlib import  cm
+from sympy import *
+from sympy.abc import *
+import inspect
+import matplotlib.pyplot as plt
 
 # <codecell>
 
@@ -297,12 +301,13 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
             # center and scale X if necessary
             X = (X - X_mean) / X_std
             y = (y - y_mean) / y_std
+            return X
         else:
             X_mean = np.zeros(1)
             X_std = np.ones(1)
             y_mean = np.zeros(1)
             y_std = np.ones(1)
-
+           return X_mean
         # Calculate matrix of distances D between samples
         D, ij = l1_cross_distances(X)
         if (np.min(np.sum(D, axis=1)) == 0.
@@ -522,7 +527,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
                         self.predict(X[batch_from:batch_to],
                                      eval_MSE=eval_MSE, batch_size=None)
 
-                return y, MSE
+                return y, MSE,n_eval
 
             else:
 
@@ -897,18 +902,6 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
 
         # Force random_start type to int
         self.random_start = int(self.random_start)
-
-# <codecell>
-
-import numpy as np
-from scipy import stats
-#from sklearn.gaussian_process import GaussianProcess
-from matplotlib import  pyplot as plt
-from matplotlib import  cm
-from sympy import *
-from sympy.abc import *
-import inspect
-import matplotlib.pyplot as plt
 
 # <codecell>
 
