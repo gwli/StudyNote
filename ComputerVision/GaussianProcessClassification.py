@@ -429,12 +429,11 @@ class GaussianProcess1(BaseEstimator, RegressorMixin):
         # Run input checks
         self._check_params(n_samples)
 
-    #        if X.shape[1] != n_features:
-#            raise ValueError(("The number of features in X (X.shape[1] = %d) "
-#                              "should match the number of features used "
-#                              "for fit() "
-#                              "which is %d.") % (X.shape[1], n_features))
-
+        if X.shape[1] != n_features:
+            raise ValueError(("The number of features in X (X.shape[1] = %d) "
+                              "should match the number of features used "
+                              "for fit() "
+                              "which is %d.") % (X.shape[1], n_features))
 
         if batch_size is None:
             # No memory management
@@ -928,16 +927,15 @@ def g(x):
 
 # <codecell>
 
-# X = np.array([[-4.61611719, -6.00099547],
-#               [4.10469096, 5.32782448],
-#               [0.00000000, -0.50000000],
-#               [-6.17289014, -4.6984743],
-#               [1.3109306, -6.93271427],
-#               [-5.03823144, 3.10584743],
-#               [-2.87600388, 6.74310541],
-#               [5.21301203, 4.26386883]])
-
-X= np.random.randn(8,4)
+X = np.array([[-4.61611719, -6.00099547],
+              [4.10469096, 5.32782448],
+              [0.00000000, -0.50000000],
+              [-6.17289014, -4.6984743],
+              [1.3109306, -6.93271427],
+              [-5.03823144, 3.10584743],
+              [-2.87600388, 6.74310541],
+              [5.21301203, 4.26386883]])
+X= np.random.randn(8,2)
 y =g(X)
 y.shape
 
@@ -945,10 +943,6 @@ y.shape
 
 gp =GaussianProcess1(theta0=5e-1)
 gp.fit(X,y)
-
-# <codecell>
-
-gp.X.shape
 
 # <codecell>
 
@@ -1003,4 +997,7 @@ cs = pl.contour(x1, x2, PHI(- y_pred / sigma), [0.975], colors='r',
 pl.clabel(cs, fontsize=11)
 
 pl.show()
+
+# <codecell>
+
 
