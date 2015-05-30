@@ -9,13 +9,9 @@
 
 import numpy as np
 from scipy import stats
-#from sklearn.gaussian_process import GaussianProcess
-from matplotlib import  pyplot as plt
-from matplotlib import  cm
-from sympy import *
-from sympy.abc import *
-import inspect
-import matplotlib.pyplot as plt
+from sklearn.gaussian_process import GaussianProcess
+from matplotlib import pyplot as pl
+from matplotlib import cm
 
 # <codecell>
 
@@ -70,7 +66,7 @@ def l1_cross_distances(X):
     return D, ij
 
 
-class GaussianProcess(BaseEstimator, RegressorMixin):
+class GaussianProcess1(BaseEstimator, RegressorMixin):
     """The Gaussian Process model class.
 
     Parameters
@@ -301,13 +297,12 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
             # center and scale X if necessary
             X = (X - X_mean) / X_std
             y = (y - y_mean) / y_std
-            return X
         else:
             X_mean = np.zeros(1)
             X_std = np.ones(1)
             y_mean = np.zeros(1)
             y_std = np.ones(1)
-           return X_mean
+
         # Calculate matrix of distances D between samples
         D, ij = l1_cross_distances(X)
         if (np.min(np.sum(D, axis=1)) == 0.
@@ -434,11 +429,12 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
         # Run input checks
         self._check_params(n_samples)
 
-        if X.shape[1] != n_features:
-            raise ValueError(("The number of features in X (X.shape[1] = %d) "
-                              "should match the number of features used "
-                              "for fit() "
-                              "which is %d.") % (X.shape[1], n_features))
+    #        if X.shape[1] != n_features:
+#            raise ValueError(("The number of features in X (X.shape[1] = %d) "
+#                              "should match the number of features used "
+#                              "for fit() "
+#                              "which is %d.") % (X.shape[1], n_features))
+
 
         if batch_size is None:
             # No memory management
@@ -527,7 +523,7 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
                         self.predict(X[batch_from:batch_to],
                                      eval_MSE=eval_MSE, batch_size=None)
 
-                return y, MSE,n_eval
+                return y, MSE
 
             else:
 
@@ -905,6 +901,18 @@ class GaussianProcess(BaseEstimator, RegressorMixin):
 
 # <codecell>
 
+import numpy as np
+from scipy import stats
+#from sklearn.gaussian_process import GaussianProcess
+from matplotlib import  pyplot as plt
+from matplotlib import  cm
+from sympy import *
+from sympy.abc import *
+import inspect
+import matplotlib.pyplot as plt
+
+# <codecell>
+
 phi = stats.distributions.norm().pdf
 PHI = stats.distributions.norm().cdf
 PHIinv = stats.distributions.norm().ppf
@@ -920,15 +928,16 @@ def g(x):
 
 # <codecell>
 
-X = np.array([[-4.61611719, -6.00099547],
-              [4.10469096, 5.32782448],
-              [0.00000000, -0.50000000],
-              [-6.17289014, -4.6984743],
-              [1.3109306, -6.93271427],
-              [-5.03823144, 3.10584743],
-              [-2.87600388, 6.74310541],
-              [5.21301203, 4.26386883]])
-X= np.random.randn(8,2)
+# X = np.array([[-4.61611719, -6.00099547],
+#               [4.10469096, 5.32782448],
+#               [0.00000000, -0.50000000],
+#               [-6.17289014, -4.6984743],
+#               [1.3109306, -6.93271427],
+#               [-5.03823144, 3.10584743],
+#               [-2.87600388, 6.74310541],
+#               [5.21301203, 4.26386883]])
+
+X= np.random.randn(8,4)
 y =g(X)
 y.shape
 
@@ -936,6 +945,10 @@ y.shape
 
 gp =GaussianProcess1(theta0=5e-1)
 gp.fit(X,y)
+
+# <codecell>
+
+gp.X.shape
 
 # <codecell>
 
@@ -990,7 +1003,4 @@ cs = pl.contour(x1, x2, PHI(- y_pred / sigma), [0.975], colors='r',
 pl.clabel(cs, fontsize=11)
 
 pl.show()
-
-# <codecell>
-
 
