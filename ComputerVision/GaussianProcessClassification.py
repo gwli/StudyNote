@@ -422,7 +422,7 @@ class GaussianProcess1(BaseEstimator, RegressorMixin):
 
         # Check input shapes
         X = check_array(X)
-        n_eval, _ = X.shape
+        n_eval, self.testdata = X.shape
         n_samples, n_features = self.X.shape
         n_samples_y, n_targets = self.y.shape
 
@@ -997,6 +997,38 @@ cs = pl.contour(x1, x2, PHI(- y_pred / sigma), [0.975], colors='r',
 pl.clabel(cs, fontsize=11)
 
 pl.show()
+
+# <codecell>
+
+gp.X
+
+# <codecell>
+
+gp.X_mean
+
+# <codecell>
+
+gp.D
+
+# <codecell>
+
+gp.ij
+
+# <codecell>
+
+X= np.random.randn(8,4)
+
+# <codecell>
+
+X1,y1=check_X_y(X,y)
+
+# <codecell>
+
+X1.shape
+
+# <codecell>
+
+gp.testdata
 
 # <codecell>
 
