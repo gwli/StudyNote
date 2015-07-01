@@ -1,30 +1,48 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
+"""This tutorial introduces the LeNet5 neural network architecture
+using Theano.  LeNet5 is a convolutional neural network, good for
+classifying images. This tutorial shows how to build the architecture,
+and comes with all the hyper-parameters you need to reproduce the
+paper's MNIST results.
 
-# <markdowncell>
 
-# # 卷积神经网络整个代码
+This implementation simplifies the model in the following ways:
 
-# <codecell>
+ - LeNetConvPool doesn't implement location-specific gain and bias parameters
+ - LeNetConvPool doesn't implement pooling by average, it implements pooling
+   by max.
+ - Digit classification is implemented with a logistic regression rather than
+   an RBF network
+ - LeNet5 was not fully-connected convolutions at second layer
 
+References:
+ - Y. LeCun, L. Bottou, Y. Bengio and P. Haffner:
+   Gradient-Based Learning Applied to Document
+   Recognition, Proceedings of the IEEE, 86(11):2278-2324, November 1998.
+   http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
+
+"""
 import os
 import sys
 import time
+
 import numpy
+
 import theano
 import theano.tensor as T
 from theano.tensor.signal import downsample
 from theano.tensor.nnet import conv
+
 from logistic_sgd import LogisticRegression, load_data
 from mlp import HiddenLayer
 
-# <codecell>
 
 class LeNetConvPoolLayer(object):
     """Pool Layer of a convolutional network """
+
     def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2)):
         """
         Allocate a LeNetConvPoolLayer with shared variable internal parameters.
+
         :type rng: numpy.random.RandomState
         :param rng: a random number generator used to initialize weights
 
@@ -88,6 +106,7 @@ class LeNetConvPoolLayer(object):
         # thus be broadcasted across mini-batches and feature map
         # width & height
         self.output = T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+
         # store parameters of this layer
         self.params = [self.W, self.b]
 
@@ -144,6 +163,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
     # to a 4D tensor, compatible with our LeNetConvPoolLayer
     # (28, 28) is the size of MNIST images.
     layer0_input = x.reshape((batch_size, 1, 28, 28))
+
     # Construct the first convolutional pooling layer:
     # filtering reduces the image size to (28-5+1 , 28-5+1) = (24, 24)
     # maxpooling reduces this further to (24/2, 24/2) = (12, 12)
@@ -185,6 +205,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
 
     # classify the values of the fully-connected sigmoidal layer
     layer3 = LogisticRegression(input=layer2.output, n_in=500, n_out=10)
+
     # the cost we minimize during training is the NLL of the model
     cost = layer3.negative_log_likelihood(y)
 
@@ -208,8 +229,6 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
     )
 
     # create a list of all model parameters to be fit by gradient descent
-    
-    
     params = layer3.params + layer2.params + layer1.params + layer0.params
 
     # create a list of gradients for all model parameters
@@ -316,13 +335,9 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
-# <codecell>
-
 if __name__ == '__main__':
     evaluate_lenet5()
+
+
 def experiment(state, channel):
     evaluate_lenet5(state.learning_rate, dataset=state.dataset)
-
-# <codecell>
-
-
