@@ -12,14 +12,15 @@ import collections
 
 # <codecell>
 
-def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold,JHRS,Ratio):
+def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold1,ChaoChuThreshold2,JHRS,Ratio):
     """
     设定超出分数线分数
     设定投档人数下限
     设定实际投档的人数不能超过计划的百分比
     RangeStart 表示从那个数据开始
     RangeEend 从哪个数据结束
-    ChaoChuThreshold 超出分数线多少分，跟一本还是二本有关系
+    ChaoChuThreshold1 最低超出分数线多少分，跟一本还是二本有关系
+    ChaoChuThreshold2 最高超出分数线多少分，跟一本还是二本有关系
     JHRS 计划报考人数
     Ratio 不超过计划的比例
     """
@@ -37,7 +38,8 @@ def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold,JHRS,Ratio):
         data= pd.DataFrame(dataLR,columns=[u'院校代号',u'院校名称',u'计划人数',u'实际投档人数', u'超出'])
         allData.append(data)
         data.interpolate(method='bfill')
-        data2=data[data[u'超出']<=ChaoChuThreshold]
+        data1=data[data[u'超出']>ChaoChuThreshold1]
+        data2=data1[data1[u'超出']<=ChaoChuThreshold2]
         data3=data2[data2[u'计划人数']>JHRS]
         data4=data3[data3[u'实际投档人数']-data3[u'计划人数']<data3[u'计划人数']*Ratio]
         data5= pd.DataFrame(data4,columns=[u'院校代号'])
@@ -70,9 +72,12 @@ for i in xrange(SheetNum):
 
 # <codecell>
 
-ChooseSchool(0,SheetNum/4,20,20,0.1)
+ChooseSchool(0,SheetNum/4,10,50,0,10)
 
 # <codecell>
 
-ChooseSchool(SheetNum/4,SheetNum/2,20,20,0.1)
+ChooseSchool(SheetNum/4,SheetNum/2,10,50,20,0.1)
+
+# <codecell>
+
 
