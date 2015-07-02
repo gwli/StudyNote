@@ -33,18 +33,19 @@ def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold1,ChaoChuThreshold2,JHRS,Ra
         allData.append(data)
         data.interpolate(method='bfill')
         data1=data[data[u'超出']>ChaoChuThreshold1]
+        print data1
         data2=data1[data1[u'超出']<=ChaoChuThreshold2]
         data3=data2[data2[u'计划人数']>JHRS]
         data4=data3[data3[u'实际投档人数']-data3[u'计划人数']<data3[u'计划人数']*Ratio]
         data5= pd.DataFrame(data4,columns=[u'院校代号'])
-        print data5
         result.append(data5)
     result = pd.concat(result, axis=0) 
     allData = pd.concat(allData,axis=0)
     for x,y in collections.Counter(result[u'院校代号']).items():
         if y>1:
             print int(x)
-            print allData[allData[u'院校代号']==x]
+            print allData[allData['院校代号']==x]
+            allData.to_csv('results.csv')
 
 # <headingcell level=3>
 
