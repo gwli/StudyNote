@@ -44,8 +44,8 @@ def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold1,ChaoChuThreshold2,JHRS,Ra
     for x,y in collections.Counter(result[u'院校代号']).items():
         if y>1:
             print int(x)
-            print allData[allData['院校代号']==x]
-            allData.to_csv('results.csv')
+            print allData[allData[u'院校代号']==x]
+            allData.to_csv('results.csv',encoding='utf-8')
 
 # <headingcell level=3>
 
