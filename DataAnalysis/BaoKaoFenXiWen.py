@@ -33,7 +33,6 @@ def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold1,ChaoChuThreshold2,JHRS,Ra
         allData.append(data)
         data.interpolate(method='bfill')
         data1=data[data[u'超出']>ChaoChuThreshold1]
-        print data1
         data2=data1[data1[u'超出']<=ChaoChuThreshold2]
         data3=data2[data2[u'计划人数']>JHRS]
         data4=data3[data3[u'实际投档人数']-data3[u'计划人数']<data3[u'计划人数']*Ratio]
@@ -42,7 +41,7 @@ def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold1,ChaoChuThreshold2,JHRS,Ra
     result = pd.concat(result, axis=0) 
     allData = pd.concat(allData,axis=0)
     for x,y in collections.Counter(result[u'院校代号']).items():
-        if y>1:
+        if y>2:
             print int(x)
             print allData[allData[u'院校代号']==x]
             allData.to_csv('results.csv',encoding='utf-8')
@@ -58,41 +57,6 @@ SheetNum =len(BaoKaoDate.sheet_names)-1
 for i in xrange(SheetNum):
     print BaoKaoDate.sheet_names[i]
 
-# <codecell>
-
-data 12=BaoKaoDate.parse()
-
-# <codecell>
-
-RangeStart=0
-RangeEend= SheetNum/2
-ChaoChuThreshold1=2 
-ChaoChuThreshold2 =50
-JHRS =10
-Ratio =0.1
-result = []
-allData=[]
-for i in xrange(RangeStart,RangeEend):
-    data=[]
-    data = BaoKaoDate.parse(BaoKaoDate.sheet_names[i])
-    data= pd.DataFrame(data,columns=[u'院校代号',u'院校名称',u'计划人数',u'实际投档人数', u'超出'])
-    print data
-    allData.append(data)
-    data.interpolate(method='bfill')
-    data1=data[data[u'超出']>ChaoChuThreshold1]
-    data2=data1[data1[u'超出']<=ChaoChuThreshold2]
-    data3=data2[data2[u'计划人数']>JHRS]
-    data4=data3[data3[u'实际投档人数']-data3[u'计划人数']<data3[u'计划人数']*Ratio]
-    data5= pd.DataFrame(data4,columns=[u'院校代号'])
-    result.append(data5)
-result = pd.concat(result, axis=0) 
-allData = pd.concat(allData,axis=0)
-for x,y in collections.Counter(result[u'院校代号']).items():
-    if y>1:
-        print int(x)
-        print allData[allData['院校代号']==x]
-        allData.to_csv('results.csv')
-
 # <headingcell level=3>
 
 # 一本院校分析
@@ -107,11 +71,5 @@ ChooseSchool(0,SheetNum/2,10,50,0,10)
 
 # <codecell>
 
-ChooseSchool(SheetNum/2,SheetNum,10,50,20,0.1)
-
-# <codecell>
-
-
-# <codecell>
-
+ChooseSchool(SheetNum/2,SheetNum,0,25,0,10)
 
