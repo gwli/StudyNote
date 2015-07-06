@@ -63,7 +63,7 @@ for i in xrange(SheetNum):
 
 # <codecell>
 
-ChooseSchool(0,SheetNum/2,10,50,0,10)
+#ChooseSchool(0,SheetNum/2,10,50,0,10)
 
 # <headingcell level=3>
 

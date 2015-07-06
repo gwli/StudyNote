@@ -47,8 +47,7 @@ def ChooseSchool(RangeStart,RangeEnd,ChaoChuThreshold1,ChaoChuThreshold2,JHRS,Ra
     result = pd.concat(result, axis=0) 
     allData = pd.concat(allData,axis=0)
     for x,y in collections.Counter(result[u'院校代号']).items():
-        if y>3:
-            print int(x)
+        if y>2:
             print allData[allData[u'院校代号']==x]
 
 # <headingcell level=3>
@@ -66,17 +65,17 @@ for i in xrange(SheetNum):
 
 # 一本院校分析
 
+# <codecell>
+
+ChooseSchool(0,SheetNum/4,10,50,0,10)
+
 # <headingcell level=3>
 
 # 二本院校分析
 
 # <codecell>
 
-ChooseSchool(0,SheetNum/4,10,50,0,10)
-
-# <codecell>
-
-ChooseSchool(SheetNum/4,SheetNum/2,10,50,20,0.1)
+ChooseSchool(SheetNum/4,SheetNum/2,10,50,0,100)
 
 # <codecell>
 
