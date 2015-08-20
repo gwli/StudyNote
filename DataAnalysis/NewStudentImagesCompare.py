@@ -11,23 +11,12 @@ import cv2
 
 # <codecell>
 
-os.getcwd()
-
-# <codecell>
-
-BeforePoressing = glob('BeforeProcessing/*.jpg')
-
-# <codecell>
-
-BeforePoressing[0][17:32]
+BeforePoressing = glob('zp/*.jpg')
 
 # <codecell>
 
 N= size(BeforePoressing)
-
-# <codecell>
-
-BeforePoressing = glob('BeforeProcessing/*.jpg')
+N
 
 # <codecell>
 
@@ -35,33 +24,36 @@ BiDuiBiao = pd.read_csv('BiDuiBiao.csv')
 
 # <codecell>
 
-BiDuiBiao
-
-# <codecell>
-
 BiDuiBiao['KaoShengHao1'][0]
 
 # <codecell>
 
-int(KaoShengHao)
+filename[3:18]
 
 # <codecell>
 
+count =0
 for elem in BeforePoressing:
     (filename,ext) = os.path.splitext(elem)
     image = cv2.imread(elem)
-    KaoShengHao =filename[17:35]
+    KaoShengHao =filename[3:18]
     KaoShengHaoBiao = BiDuiBiao['KaoShengHao1']
-    index = KaoShengHaoBiao[KaoShengHaoBiao==int(KaoShengHao)].index[0]
-    cv2.imwrite(str(BiDuiBiao['XueHao1'][index])+'.jpg',image)        
+    value = KaoShengHaoBiao[int(KaoShengHao)==KaoShengHaoBiao].values.tolist()
+    if value!=[]:
+        cv2.imwrite(str(value[0])+'.jpg',image)  
+        count+=1
 
 # <codecell>
 
-BiDuiBiao['XueHao1'][0]
+str(value[0])
 
 # <codecell>
 
-ls 150.jpg  
+count
+
+# <codecell>
+
+ls 15411
 
 # <codecell>
 
