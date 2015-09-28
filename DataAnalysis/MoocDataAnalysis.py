@@ -229,12 +229,17 @@ NewMoocData1 = NewMoocData.as_matrix()
 
 NewMoocData2 =np.zeros(NewMoocData1.shape)
 for i in xrange(NewMoocData1.shape[1]):
-    NewMoocDataPart=  NewMoocData1[:,i]-np.mean(NewMoocData1[:,i])
-    NewMoocData2[:,i] = NewMoocDataPart/np.cov(NewMoocDataPart)
+    NewMoocDataPart = NewMoocData1[:,i]-np.mean(NewMoocData1[:,i])
+    CovNewMoocDataPart =NewMoocDataPart.dot(NewMoocDataPart)/NewMoocData1.shape[0]
+    NewMoocData2[:,i] = NewMoocDataPart/np.sqrt(CovNewMoocDataPart)
 
 # <codecell>
 
 U,D,V = np.linalg.svd(np.cov(NewMoocData2.T))
+
+# <codecell>
+
+np.cov(NewMoocDataPart)
 
 # <codecell>
 
