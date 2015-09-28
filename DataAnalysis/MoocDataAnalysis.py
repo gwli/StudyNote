@@ -177,4 +177,75 @@ data.plot(kind='bar')
 
 # <codecell>
 
+Certified =MoocData['certified'].groupby(MoocData['grade'])
+data = Certified.mean()
+data.plot(kind='bar')
+
+# <markdowncell>
+
+# 说明得分的人挺多的
+
+# <codecell>
+
+Certified =MoocData['grade'].groupby(MoocData['nevents'])
+data = Certified.max()
+plt.fill_between(Certified.indices,Certified)
+
+# <codecell>
+
+for key, grp in MoocData.groupby(['nevents']):
+  print key,grp
+
+# <headingcell level=2>
+
+# 下面是综合分析这些有用的变量
+
+# <headingcell level=3>
+
+# 从一个pandas 找出部分元素，使用 DataFrame
+
+# <codecell>
+
+NewMoocData = pd.DataFrame(MoocData,columns=['viewed','explored','time_spend','nevents','ndays_act','nplay_video','nchapters','nforum_posts']
+)
+
+# <headingcell level=3>
+
+# 因为这些数据中certified 都有值，说明这些数据都结束了，因此对所有null的数据进行补零
+
+# <codecell>
+
+import scipy
+
+# <codecell>
+
+NewMoocData[NewMoocData.isnull()]=0
+
+# <codecell>
+
+NewMoocData1 = NewMoocData.as_matrix()
+
+# <codecell>
+
+NewMoocData2 =np.zeros(NewMoocData1.shape)
+for i in xrange(NewMoocData1.shape[1]):
+    NewMoocDataPart=  NewMoocData1[:,i]-np.mean(NewMoocData1[:,i])
+    NewMoocData2[:,i] = NewMoocDataPart/np.cov(NewMoocDataPart)
+
+# <codecell>
+
+U,D,V = np.linalg.svd(np.cov(NewMoocData2.T))
+
+# <codecell>
+
+import matplotlib.pylab as plt
+
+# <codecell>
+
+plt.plot(D)
+plt.xlabel('Data Dimensions')
+plt.ylabel('Eigenvalue')
+
+# <codecell>
+
 
