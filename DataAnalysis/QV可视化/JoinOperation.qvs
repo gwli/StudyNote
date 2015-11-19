@@ -1,0 +1,36 @@
+﻿///$tab Main
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='¥#,##0.00;¥-#,##0.00';
+SET TimeFormat='h:mm:ss';
+SET DateFormat='YYYY/M/D';
+SET TimestampFormat='YYYY/M/D h:mm:ss[.fff]';
+SET MonthNames='一月;二月;三月;四月;五月;六月;七月;八月;九月;十月;十一月;十二月';
+SET DayNames='周一;周二;周三;周四;周五;周六;周日';
+
+exp:
+LOAD 学院, 
+     学号, 
+     姓名, 
+     毕业去向, 
+     单位名称, 
+     单位性质, 
+     所在地区, 
+     报到证备注单位
+FROM
+E:\快盘1\数据\dc_sy_yx10464.xls
+(html, codepage is 936, embedded labels, table is @1);
+
+Left Join
+
+
+LOAD 学号, 
+     图书号
+FROM
+E:\快盘1\数据\bookborrowtmp.xls
+(biff, embedded labels, table is [Sheet1$]);
+
+
+STORE exp into EXP.csv(txt);
