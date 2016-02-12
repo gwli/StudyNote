@@ -1,0 +1,41 @@
+﻿///$tab Main
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='¥#,##0.00;¥-#,##0.00';
+SET TimeFormat='h:mm:ss';
+SET DateFormat='YYYY/M/D';
+SET TimestampFormat='YYYY/M/D h:mm:ss[.fff]';
+SET MonthNames='一月;二月;三月;四月;五月;六月;七月;八月;九月;十月;十一月;十二月';
+SET DayNames='周一;周二;周三;周四;周五;周六;周日';
+
+LOAD 中图分类号, 
+     主键码, 
+     处理时间, 
+     学号, 
+          条形码 & '_' & 读者条码 	as orderkey, 
+     操作类型, 
+     赔罚款, 
+     超期天数, 
+     退赔, 
+     题名
+FROM
+E:\快盘1\数据\招生就业数据\借书信息.xlsm
+(ooxml, embedded labels, table is TB01_20151130_184628);
+
+left join
+
+LOAD 中图分类号, 
+     主键码, 
+     处理时间, 
+     学号, 
+     操作类型, 
+     赔罚款, 
+     超期天数, 
+     退赔, 
+     题名
+FROM
+E:\快盘1\数据\招生就业数据\还书信息.xlsm
+(ooxml, embedded labels, table is TB01_20151130_184213);
+

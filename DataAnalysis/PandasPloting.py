@@ -101,6 +101,7 @@ ts.plot()
 
 # <markdowncell>
 
+ts1 = pd.Series(ts,index=pd.date_range('1/8/2000',periods=N) )
 # ts.cumsum 按照要求的轴返回累积值，等会试下其他的,
 # 好像是没有用的。
 
