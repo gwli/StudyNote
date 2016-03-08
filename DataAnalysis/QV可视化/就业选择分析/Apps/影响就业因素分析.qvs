@@ -1,0 +1,295 @@
+﻿///$tab Main
+//Binary 招生就业分析.qvw;
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='¥#,##0.00;¥-#,##0.00';
+SET TimeFormat='h:mm:ss';
+SET DateFormat='YYYY/M/D';
+SET TimestampFormat='YYYY/M/D h:mm:ss[.fff]';
+SET MonthNames='一月;二月;三月;四月;五月;六月;七月;八月;九月;十月;十一月;十二月';
+SET DayNames='周一;周二;周三;周四;周五;周六;周日';
+
+
+就业分析:
+LOAD 学号 as 学号, 
+//     left(学号,2) as 年级,
+     学院 as 学院_就业, 
+     姓名, 
+     毕业去向, 
+//     单位名称, 
+     //扩展项5, 
+     专业, 
+//     学历, 
+     性别, 
+//     生源地区, 
+     家庭地址, 
+     毕业选择, 
+     来源省份, 
+//     学号文本, 
+     家庭状况
+//     中图分类号, 
+//     主键码, 
+//     借书, 
+//     包括图书种类, 
+//     还书, 
+//     时间差
+FROM
+就业分析.qvd
+(qvd);
+Inner join
+
+T1:
+LOAD 
+//	 修读学年, 
+//     修读学期, 
+//     取得学年, 
+//     取得学期, 
+      学号, 
+//     课程号, 
+//     课程名称, 
+//     课程学分, 
+//     课程属性, 
+//     课程性质, 
+//     课程类别, 
+       avg(考试成绩) as 平均成绩,
+       if( avg(考试成绩)>=85,'优',if( avg(考试成绩)>=75,'良','一般')) as 成绩分级
+//     学分绩点, 
+//     取得方式, 
+//     辅修标记
+FROM
+学生成绩.qvd(qvd)
+group by 学号;
+
+
+Inner join
+学生基本信息就业部分:
+LOAD 学号,
+     XM as 姓名, 
+//     高考考生号, 
+//     LQH, 
+//     SFZH, 
+//       XYBH, 
+//       ZYBH, 
+//     CCH, 
+//     XKML, 
+//     SSNJ, 
+//     RXNF, 
+//     BJBH, 
+     if(XB=1,'男',if(XB=2,'女'))  as 性别_学生基本信息
+//     SYSQ as 来源省份, 
+//     MZ, 
+//     ZZMM, 
+//     CSRQ as 出生日期
+//     JG, 
+//     JTZZ, 
+//     JTDH, 
+//     XZ, 
+//     PYFS, 
+//     XSZT, 
+//     YKTH, 
+//     YKTSPKH, 
+//     ZSLB, 
+//       GKZF as 高考总分
+//     if(GKZF<=455,'三本',if(GKZF<=513,'二本','一本'))  as 高考成绩分类
+//     YW, 
+//     SX, 
+//     WY, 
+//     X, 
+//     ZH1,  
+//     ZH2, 
+//     YHKH, 
+//     JFH, 
+//     GXSJ, 
+//     BZ, 
+//     BDBJBH, 
+//     XSLB, 
+//     TJR, 
+//     EMAIL, 
+//     LQZYM　as 录取专业
+//     ZSXQ, 
+//     ID, 
+//     GJ, 
+//     BAK3, 
+//     BAK4, 
+//     BAK5, 
+//     RXRQ, 
+//     SFZJ, 
+//     BAK6, 
+//     BAK7, 
+//     BAK8, 
+//     BAK9, 
+//     BAK10, 
+//     PCH, 
+//     KSLBM, 
+//     BKZYM, 
+//     BYXX, 
+//     XJZDZ, 
+//     XXDH, 
+//     JKZK, 
+//     CYM, 
+//     WYYZ, 
+//     SFZS, 
+//     YJBYNF
+FROM
+学生数据.qvd(qvd);
+
+
+
+
+成绩取得类型:
+LOAD * INLINE [
+    取得方式, 取得名称
+    1, 初修
+    2, 重修
+    3, 补考
+    4,
+];
+
+毕业选择类型:
+LOAD * INLINE [
+    毕业选择, 就业标示
+    0, 参加工作
+    1, 升学
+    2, 出国
+    3, 待业
+];
+//
+//
+家庭状况:
+LOAD * INLINE [
+    家庭状况, 家庭状况标示
+    0, 农村
+    1, 城镇
+ 
+];
+
+
+
+
+///$tab 2015新生
+招生计划:
+Directory;
+LOAD 专业, 
+     科类, 
+     计划人数
+FROM
+[2015招生计划1.xlsx]
+(ooxml, embedded labels, table is Sheet1);
+
+
+学生基本信息:
+LOAD 学号, 
+//     XM, 
+     Left(学号,2) as 年级,
+     高考考生号, 
+//     LQH, 
+//     Date(Mid(SFZH,7,8),YYYYMMDD) as 身份证号,
+     Mid(SFZH,7,8) as 身份证号,
+//     Mid(SFZH,11,4) as 出生月日,
+     if(Mid(SFZH,11,4)<=120,'摩羯座',if(Mid(SFZH,11,4)<=219,'水瓶座',if(Mid(SFZH,11,4)<=320,'双鱼座',if(Mid(SFZH,11,4)<=420,'白羊座',if(Mid(SFZH,11,4)<=521,'金牛座',
+     if(Mid(SFZH,11,4)<=621,'双子座',if(Mid(SFZH,11,4)<=722,'巨蟹座',if(Mid(SFZH,11,4)<=822,'狮子座',if(Mid(SFZH,11,4)<=923,'处女座',
+     if(Mid(SFZH,11,4)<=1023,'天秤座',if(Mid(SFZH,11,4)<=1122,'天蝎座',if(Mid(SFZH,11,4)<=1221,'射手座','摩羯座')))))))))))) as 星座,
+//      SFZH  as  身份证号,
+     XYBH as 学院编号, 
+     ZYBH as 专业编号, 
+//     CCH, 
+//     XKML, 
+//     SSNJ, 
+//     RXNF, 
+//     BJBH, 
+//     XB, 
+     SYSQ as 生源地, 
+//     MZ, 
+//     ZZMM, 
+//       left(CSRQ,7)  as 出生日期, 
+//      Date(Left(CSRQ,7),YYYYMMDD) as 出生日期, 
+//     JG, 
+//     JTZZ, 
+//     JTDH, 
+//     XZ, 
+//     PYFS, 
+//     XSZT, 
+//     YKTH, 
+//     YKTSPKH, 
+//     ZSLB, 
+     GKZF as 高考总分
+//     YW, 
+//     SX, 
+//     WY, 
+//     X, 
+//     ZH1, 
+//     ZH2, 
+//     YHKH, 
+//     JFH, 
+//     GXSJ, 
+//     BZ, 
+//     BDBJBH, 
+//     XSLB, 
+//     TJR, 
+//     EMAIL, 
+//     LQZYM, 
+//     ZSXQ, 
+//     ID, 
+//     GJ, 
+//     BAK3, 
+//     BAK4, 
+//     BAK5, 
+//     RXRQ, 
+//     SFZJ, 
+//     BAK6, 
+//     BAK7, 
+//     BAK8, 
+//     BAK9, 
+//     BAK10, 
+//     PCH, 
+//     KSLBM, 
+//     BKZYM, 
+//     BYXX, 
+//     XJZDZ, 
+//     XXDH, 
+//     JKZK, 
+//     CYM, 
+//     WYYZ, 
+//     SFZS, 
+//     YJBYNF
+FROM
+学生数据.qvd
+(qvd)
+Where MId(SFZH,7,2)='19' or MId(SFZH,7,2)='20'
+;
+
+
+
+
+
+
+inner join
+LOAD 
+//     PKEY, 
+//     XSLB, 
+//     XSLBM, 
+     ZYH as 专业编号, 
+     ZYMC as 专业名称_2015级
+//     ZYJC, 
+//     ZYYWMC, 
+//     ZYFXH, 
+//     YXSH, 
+//     XZ, 
+//     XKMLM, 
+//     BZKZYM, 
+//     YJSZYM, 
+//     JLNY, 
+//     QSXQ, 
+//     GXSJ, 
+//     BZKZYMC
+FROM
+专业表.qvd
+(qvd);
+//
+//Load 
+//专业名称_2015级,
+//Avg(高考总分) as 各专业高考平均分
+//Resident 学生基本信息 Group By 专业名称_2015级;
+
